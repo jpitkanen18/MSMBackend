@@ -1,0 +1,23 @@
+{
+    "memberNames": [
+       "name"
+    ],
+    "memberIds": {
+        "name" : "id"
+    },
+    "taskPhrases": [
+        "will do",
+        "is going to do",
+        "has",
+        "will be doing",
+        "works on",
+        "should work on",
+        "does"    
+    ],
+    "currentUserMembership": {
+        "id": "id",
+        "type": "type",
+        "name": "name",
+        "role": "role"
+    }
+}

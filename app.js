@@ -1,5 +1,5 @@
 const createError = require('http-errors');
-const  express = require('express');
+const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -9,6 +9,7 @@ require('./components/parseSpeech');
 var indexRouter = require('./routes/index');
 var speechRouter = require('./routes/speech');
 var newboardRouter = require('./routes/newboard')
+var boardsRouter = require('./routes/boards')
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/speech', speechRouter);
 app.use('/newboard', newboardRouter);
+app.use('/boards', boardsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -46,15 +48,31 @@ app.use(function(err, req, res, next) {
 */
 
 
-function flushBoard(){
-  const boardid = "o9J_lhp95Ec=";
+function flushBoardItems(){
+  const boardid = "o9J_lhs4F_M=";
   miro.getItemsOnBoard(boardid).then(items =>{
     console.log(items.data);
     items.data.forEach(item => {
       miro.deleteItem(boardid, item.id);
-    })
+    });
+  }).catch(err =>{
+    console.log(err)
   })
 }
-//flushBoard()
+
+function flushBoards(){
+  miro.listBoardsAsTeam().then(items =>{
+    items.data.forEach(item => {
+      miro.deleteBoard(item.id).then(res=>console.log(res));
+    })
+    miro.createBoard("Default", "Blank");
+  }).catch(err =>{
+    console.log(err)
+  })
+}
+
+flushBoardItems()
+//flushBoards()
+
 
 module.exports = app;

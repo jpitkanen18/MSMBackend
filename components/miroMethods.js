@@ -49,6 +49,10 @@ async function listBoardsAsTeam(){
         fetch('https://api.miro.com/v2/boards?sort=alphabetically&limit=20&offset=0', options)
         .then(response => response.json())
         .then(response => {
+            if(response === []){
+                reject("Response blank")
+                return
+            } 
             console.log(response);
             resolve(response);
         })
@@ -56,10 +60,9 @@ async function listBoardsAsTeam(){
             console.error(err)
             reject(err)
         });
-      })
-      return response
-      
-}
+      });
+    return response
+};
 async function getBoard(id){
     const options = {
         method: 'GET',
@@ -70,9 +73,14 @@ async function getBoard(id){
       };
       
       fetch('https://api.miro.com/v2/boards/' + id, options)
-        .then(response => response.json())
+        .then(response => {
+            if(response === []){
+                reject("Blank")
+            }
+        response.json()
         .then(response => console.log(response))
         .catch(err => console.error(err));
+    })
 }
 
 async function copyBoard(){
@@ -118,7 +126,7 @@ async function updateBoard(){
         .catch(err => console.error(err));
 }
 
-async function deleteBoard(){
+async function deleteBoard(id){
     const options = {
         method: 'DELETE',
         headers: {
@@ -127,20 +135,22 @@ async function deleteBoard(){
         }
       };
       var response = new Promise(async function(resolve, reject){
-        fetch('https://api.miro.com/v2/boards/board_id', options)
-            .then(response => response.json())
-            .then(response => {
-                console.log(response)
-                resolve(reponse)
-            })
-            .catch(err => {
-                console.error(err)
-                reject(err);
-            });
-        return response;
-    
+        fetch('https://api.miro.com/v2/boards/' + id, options)
+        .then(response => response.text()).then(response => {
+            if(response === []){
+                reject("Response blank")
+                return
+            } 
+            console.log(response);
+            resolve(response);
+        })
+        .catch(err => {
+            console.error(err)
+            reject(err);
+        });
       });
-    }
+    return response;
+}
 
 
 
@@ -154,7 +164,12 @@ async function listBoardMembers(){
       };
       
       fetch('https://api.miro.com/v2/boards/board_id/members?limit=20&offset=0', options)
-        .then(response => response.json())
+        .then(response => {
+            if(response === []){
+                reject("Blank")
+            }
+            response.json()
+        })
         .then(response => console.log(response))
         .catch(err => console.error(err));
 }
@@ -264,11 +279,55 @@ async function createCardItem(id, title, content, [x, y] = [0, 0]){
       geometry: {x: x, y: y, width: '320.0', height: '94.0', rotation: '0.0'}
     })
   };
-   
-  fetch('https://api.miro.com/v2/boards/' + id + '/cards', options)
+  var response = new Promise(async function(resolve, reject){
+    fetch('https://api.miro.com/v2/boards/' + id + '/cards', options)
     .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.error(err));
+    .then(response => {
+        console.log(response);
+        resolve(response);
+    })
+    .catch(err => {
+        console.error(err)
+        reject(err);
+    });
+  });
+  return response;
+}
+
+async function createTextItem(id, content, [x, y] = [0, 0]){
+    const options = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer kRA514q6F6FO2ctQwSG77KrIkD8'
+        },
+        body: JSON.stringify({
+          data: {content: '<h1>' + content + '</h1>'},
+          style: {
+            backgroundOpacity: '0.0',
+            borderWidth: "0.0",
+            fontFamily: 'roboto_mono',
+            textAlign: 'left',
+            fontSize: "30",
+          },
+          geometry: {x: x, y: y, width: '250.0', rotation: '0'}
+        })
+      };
+      console.log(options)
+      var response = new Promise(async function(resolve, reject){
+        fetch('https://api.miro.com/v2/boards/' + id + '/texts', options)
+        .then(response => response.json())
+        .then(response => {
+            console.log(response.context);
+            resolve(response);
+        })
+        .catch(err => {
+            console.error(err)
+            reject(err);
+        });
+      });
+      return response;
 }
 
 async function updateCardItem(){
@@ -336,6 +395,7 @@ exports.getItemOnBoard = getItemOnBoard;
 exports.updateItemPosition = updateItemPosition;
 exports.deleteItem = deleteItem;
 exports.createCardItem = createCardItem;
+exports.createTextItem = createTextItem;
 exports.updateCardItem = updateCardItem;
 exports.updateCardItemPos = updateCardItemPos;
 exports.createEmbedItem = createEmbedItem;
@@ -346,5 +406,6 @@ listBoardsAsTeam().then(res =>{
     console.log(res.data[0])
     var board = res.data[0]
     createCardItem(board.id, "Huutis mint", "vanamehe jäätis")
+    console.log(JSON.stringify(res.data[0]))
 })
 */

@@ -43,13 +43,18 @@
   //Returns the current date and time
   function dateTime() {
     var date = new Date();
+    var currentHours = date.getHours();
+    currentHours = ("0" + currentHours).slice(-2);
+    var currentMinutes = date.getMinutes();
+    currentMinutes = ("0" + currentMinutes).slice(-2);
+    var currentSeconds = date.getSeconds();
+    currentSeconds = ("0" + currentSeconds).slice(-2);
     var formattedDate =
       date.getDay() + "/" + date.getMonth() + "/" + date.getFullYear();
     var formattedTime = date.getHours() + ":" + date.getMinutes();
-    var seconds = date.getSeconds();
-    return [formattedDate, formattedTime, seconds];
+    var formattedTimeFull = currentHours + ":" + currentMinutes + ":" + currentSeconds;
+    return [formattedDate, formattedTime,formattedTimeFull, currentSeconds];
   }
-
   exports.toHHMMSS = toHHMMSS;
   exports.getDate = getDate;
   exports.getDateUTC = getDateUTC;

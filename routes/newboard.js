@@ -5,7 +5,7 @@ const dateTime = require('../components/dateTime').dateTime;
 
 router.post('/', async function(req, res, next) {
     new Promise(async function(resolve, reject){
-        createBoard("Tasks " + dateTime()[0], "Task board for " + dateTime()[0]).then(res=>{
+        createBoard("Tasks " + dateTime()[2], "Task board for " + dateTime()[2]).then(res=>{
             resolve(res)
         }).catch(err =>{
             reject(err);

@@ -300,7 +300,7 @@ async function createTextItem(id, content, [x, y] = [0, 0]){
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          Authorization: 'Bearer kRA514q6F6FO2ctQwSG77KrIkD8'
+          Authorization: 'Bearer ' + token.key
         },
         body: JSON.stringify({
           data: {content: '<h1>' + content + '</h1>'},
